@@ -6,14 +6,15 @@ import java.text.DateFormat;
 import java.util.Date;
 class Picker {
     public static String result="";
-    public static void picker() {
-
-
-
+    public  void picker() {
         JLabel label = new JLabel("Selected Date:");
         JLabel label1 = new JLabel("Enter the Details:");
         final JTextField text = new JTextField(20);
         final JTextArea text1 = new JTextArea(5, 20);
+        final JCheckBox importantc = new JCheckBox("Important Event");
+        final JCheckBox personalc = new JCheckBox("personal Event");
+        importantc.setText("important");
+        personalc.setText("personal");
 //        final JTextArea text2 = new JTextArea(10, 30);
         JButton b = new JButton("Popup");
         JButton b1 = new JButton("Save Details");
@@ -25,15 +26,30 @@ class Picker {
         b1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    Class.forName("com.mysql.jdbc.Driver");
+                    Class.forName("com.mysql.cj.jdbc.Driver");
                     Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/todo", "root", "oviya1002");
 //                    System.out.println("conn"+con.);
                     String detail = text.getText();
                     String detail1 = text1.getText();
-                    String query = "insert into todo (dt,details)values(?,?)";
+                    String event=null;
+                    String event1 = null;
+                    if (importantc.isSelected()==true){
+                         event = "important";
+                    }else {
+                        event = "null";
+                    }
+                    if (personalc.isSelected()==true){
+                        event1 = "personal";
+                    }else {
+                        event1 = "null";
+                    }
+
+                    String query = "insert into todo (dt,details,important,personal)values(?,?,?,?)";
                     PreparedStatement stmt = con.prepareStatement(query);
                     stmt.setString(1, detail);
                     stmt.setString(2, detail1);
+                    stmt.setString(3,event);
+                    stmt.setString(4,event1);
                     int set = stmt.executeUpdate();
                     if (set > 0) {
                         JOptionPane.showMessageDialog(null, "updated successfull");
@@ -72,6 +88,8 @@ class Picker {
         p.add(label1);
         p.add(text1);
         p.add(b1);
+        p.add(importantc);
+        p.add(personalc);
 //        p.add(b2);
 //        p.add(text2);
         final JFrame f = new JFrame();
@@ -87,5 +105,4 @@ class Picker {
         });
 //        System.out.println("ther result is "+result);
     }
-
 }
